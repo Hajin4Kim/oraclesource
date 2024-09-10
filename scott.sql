@@ -1219,6 +1219,182 @@ COMMIT;
 UPDATE DEPT_TCL SET LOC = 'SEOUL' WHERE DEPTNO = 30;
 COMMIT; -- COMMIT 안한 상태로 SQLPLUS 에서 SELECT문 이외에 실행하면 LOCK 된 상태가 된다.
 
+--TODO: 09/10
+-- DDL (데이터 정의어)
+-- DB 데이터를 보관하고 관리하기 위해 제공되는 여러 객체의 생성/변경/삭제 관련 기능
+-- CREATE(생성) / ALTER(생성된 객체 변경) / DROP(생성된 객체 삭제)
+
+-- 1. 테이블 정의어 : (정의 FORMAT)
+	-- CREATE TABLE 테이블이름(열이름1 자료형, 열이름2 자료형, 열이름3 자료형, 열이름4 자료형,...)
+
+-- 테이블 이름 작성 규칙 : 
+	--1) 문자로 시작(한글 가능하나, 사용안함/ 숫자시작X)
+	--2) 테이블 이름은 길이 제한 있음(30BYTE)
+	--3) 같은 소유자 소유의 테이블 이름은 중복 불가능
+	--4) SQL 키워드는 사용 불가 (SELECT, INSERT 등)
+
+-- 열 이름 생성 규칙 :
+	--1) 문자로 시작
+	--2) 길이의 제한이 있음(30BYTE)
+	--3) 한 테이블에 열 이름 중복 불가
+	--4) 열 이름은 영문자, 숫자, 특수문자(_ # $) 사용 가능 BUT 언더바만 쓰는 편
+	--5) SQL 키워드 사용 불가 (SELECT, INSERT 등)
+
+-- 자료형 
+	-- 문자: VARCHAR2(길이), NVARCHAR2(길이), CHAR(길이), NCHAR(길이)
+		-- var 뜻: 가변(길이가 실제 저장된 데이터 만큼만 사용)
+			--EX) name varchar2(10) : 홍길동(9byete)
+			--EX) name char(10) : 홍길동(10byte) - 고정길이
+		-- DB 버전에 따라 한글 문자 하나당 2byte 또는 3byte 할당
+			--EX) name varchar2(10): 홍길동전 => 들어갈 값의 크기가 크다고 오류남
+			-- nvarchar2(): (앞에 n붙은 자료형)문자 하나 당 바이트 하나 할당
+	-- 숫자: NUMBER(전체자릿수, 소수점자릿수)
+	-- 날짜:	DATE
+	-- BLOB : 대용량 이진 데이터 저장
+	-- CLOB : 대용량 텍스트 데이터 저장
+
+CREATE TABLE EMP_DDL(
+EMPNO NUMBER(4,0),
+ENAME VARCHAR2(10), -- 영어 10자까지 가능/ 한글 3자까지 가능
+JOB VARCHAR2(9),
+MGR NUMBER(4,0),
+HIREDATE DATE,
+SAL NUMBER(7,2),
+COMM NUMBER(7,2),
+DEPTNO NUMBER(2,0)
+);
+SELECT * FROM EMP_DDL;
+-- DEPT테이블의 열구조 & 데이터 복사하여 새 테이블 생성
+CREATE TABLE DEPT_DDL AS SELECT * FROM DEPT;
+SELECT * FROM DEPT_DDL;
+-- DEPT 테이블의 열구조만 복사하여 새 테이블 생성
+CREATE TABLE DEPT_DDL2 AS SELECT * FROM DEPT WHERE 1<>1;
+
+-- ALTER: 변경/수정
+	-- 새로운 열 추가/ 열 이름 변경 / 열 삭제 / 열 자료형 변경
+
+-- EMP_DDL 에 새로운 열(HP :010-1234-5678) 추가
+ALTER TABLE EMP_DDL ADD HP VARCHAR2(20);
+SELECT * FROM EMP_DDL ED;
+
+-- HP 열 이름 => TEL 로 변경 (RENAME COLUMN)
+ALTER TABLE EMP_DDL RENAME COLUMN HP TO TEL;
+SELECT * FROM EMP_DDL ED;
+
+-- EMPNO의 NUMBER(5) 로 변경 (MODIFY)
+ALTER TABLE EMP_DDL MODIFY EMPNO NUMBER(5);
+SELECT * FROM EMP_DDL ED;
+
+-- TEL 열 삭제 (DROP COLUMN)
+ALTER TABLE EMP_DDL DROP COLUMN TEL;
+SELECT * FROM EMP_DDL ED;
+
+-- 테이블 이름 변경
+RENAME EMP_DDL TO EMP_RENAME;
+SELECT * FROM EMP_RENAME;
+-- DROP : 삭제 => 롤백 없음
+DROP TABLE EMP_RENAME;
+
+CREATE TABLE MEMBERTBL(
+ID CHAR(8),
+NAME VARCHAR2(10), --NVARCHAR2(10)도 괜찮다
+ADDR VARCHAR2(50), --NVARCHAR2
+NATION CHAR(4), --NCHAR
+EMAIL VARCHAR2(50), --NVARCHAR2
+AGE NUMBER(7,2));
+
+-- MEMBER테이블에 BIGO열 추가 (조건: 가변형 문자여르 길이는20)
+ALTER TABLE MEMBERTBL ADD BIGO VARCHAR2(20);
+SELECT * FROM MEMBERTBL;
+-- BIGO 열 크기를 30으로 변경
+ALTER TABLE MEMBERTBL MODIFY BIGO VARCHAR2(30);
+-- BIGO 열 이름을 REMARK로 변경
+ALTER TABLE MEMBERTBL RENAME COLUMN BIGO TO REMARK;
+ALTER TABLE MEMBERTBL MODIFY NATION NCHAR(40);
+--4. 데이터 삽입하기
+INSERT INTO MEMBERTBL m (ID, NAME, ADDR, NATION, EMAIL, AGE)
+VALUES('hong1234', '홍길동', '서울시 구로구 개봉동', '대한민국', 'hong123@naver.com', 25);
+INSERT INTO MEMBERTBL m (ID, NAME, ADDR, NATION, EMAIL, AGE)
+VALUES('hong1235', '이승기', '서울시 강서구 화곡동', '대한민국', 'lee89@naver.com', 26);
+INSERT INTO MEMBERTBL m (ID, NAME, ADDR, NATION, EMAIL, AGE)
+VALUES('hong1236', '강호동', '서울시 마포구 상수동', '대한민국', 'kang56@naver.com', 42);
+INSERT INTO MEMBERTBL m (ID, NAME, ADDR, NATION, EMAIL, AGE)
+VALUES('hong1237', '이수근', '경기도 부천시', '대한민국', 'leesu@naver.com', 42);
+INSERT INTO MEMBERTBL m (ID, NAME, ADDR, NATION, EMAIL, AGE)
+VALUES('hong1238', '서장훈', '서울시 강남구 대치동', '대한민국', 'seo568@naver.com', 36);
+INSERT INTO MEMBERTBL m (ID, NAME, ADDR, NATION, EMAIL, AGE)
+VALUES('hong1239', '김영철', '서울시 도봉구 도봉동', '대한민국', 'young@naver.com', 41);
+INSERT INTO MEMBERTBL m (ID, NAME, ADDR, NATION, EMAIL, AGE)
+VALUES('hong1210', '김장훈', '서울시 노원구 노원1동', '대한민국', 'kim@naver.com', 48);
+INSERT INTO MEMBERTBL m (ID, NAME, ADDR, NATION, EMAIL, AGE)
+VALUES('hong1211', '임창정', '서울시 양천구 신월동', '대한민국', 'limchang@naver.com', 45);
+INSERT INTO MEMBERTBL m (ID, NAME, ADDR, NATION, EMAIL, AGE)
+VALUES('hong1212', '김종국', '서울시 강남구 도곡동', '대한민국', 'kimjong@naver.com', 44);
+INSERT INTO MEMBERTBL m (ID, NAME, ADDR, NATION, EMAIL, AGE)
+VALUES('hong1213', '김범수', '서울시 일산동구 일산동', '대한민국', 'kim77@naver.com', 36);
+INSERT INTO MEMBERTBL m (ID, NAME, ADDR, NATION, EMAIL, AGE)
+VALUES('hong1214', '김경호', '인천시 서구 가좌동', '대한민국', 'ho789@naver.com', 26);
+INSERT INTO MEMBERTBL m (ID, NAME, ADDR, NATION, EMAIL, AGE)
+VALUES('hong1215', '민경훈', '경기도 수원시 수원1동', '대한민국', 'min@naver.com', 35);
+INSERT INTO MEMBERTBL m (ID, NAME, ADDR, NATION, EMAIL, AGE)
+VALUES('hong1216', '바이브', '경기도 용인시 기흥구', '대한민국', 'vibe@naver.com', 33);
+-- 새로 생성한 REMARK 테이블
+
+-- 오라클 객체
+-- 인덱스 / 뷰 / 시퀀스(★) / 동의어 / ROWNUM
+
+	-- 인덱스 : 빠른 검색의 목적 (하지만 검색자체가 빨라진다의 개념이 아님)
+		-- 1) 자동생성 : 기본키를 설정 시 인덱스가 자동으로 설정됨
+		-- 2) 직접 인덱스 생성 : CREATE INDEX 인덱스명 ON 테이블명(열이름1 ASC 또는 DESC, 열이름2 ASC 또는 DESC,...)
+		-- EMP 테이블의 SAL 컬럼을 index로 지정
+		CREATE INDEX IDX_EMP_SAL ON EMP(SAL);
+		DROP INDEX IDX_EMP_SAL;
+	
+	-- 뷰 : 가상 테이블
+		-- 쓰는 목적
+			-- 1) 편리성 : EX)복잡한 SELECT문을 미리 실행하여 뷰에 담아둠 => 복잡도 완화 / 자주 활용하는 SELECT문을 뷰로 저장해 놓은 후 다른 SQL 구문에서 활용 가능
+			-- 2) 보안성 : EX)노출되면 안되는 컬럼을 제외하여 접근 허용
+		-- 뷰 생성 권한 부여받기(DBA만 가능 => SYSTEM.SQL)
+		-- 뷰 생성 FORMAT
+			-- CREATE [OR REPLACE] VIEW 뷰이름(열이름1, 열이름2,...) AS (SELECT 구문);
+			-- [OR REPLACE] 는 선택; 필수아님
+		
+		-- EMP 테이블의 20번 부서에 해당하는 사원들의 뷰 생성
+--		SQL Error [1031] [42000]: ORA-01031: 권한이 불충분합니다
+		CREATE VIEW VW_EMP_20 AS (SELECT EMPNO, ENAME, JOB, DEPTNO FROM EMP e WHERE DEPTNO=20);
+		DROP VIEW VW_EMP_20;
+		
+		CREATE VIEW VW_EMP_20 AS (SELECT * FROM EMP e WHERE DEPTNO=20);
+		-- 뷰에 값 추가가능 (CREATE VIEW 로 만들었을 시, 따로 제재를 가하지 않아서)
+		INSERT INTO VW_EMP_20 VALUES(6666, '홍길동', 'MANAGER', 7899, '2012-08-01',1200, 0, 20);
+		SELECT * FROM VW_EMP_20;
+		-- 뷰에 값 추가시 -> ORIGIN 테이블에도 영향을 끼침
+		SELECT * FROM EMP;
+	--TODO: 뷰에 제재 추가
+-- 뷰는 SELECT만 가능하도록 제한 (WITH READ ONLY)
+CREATE VIEW VW_EMP_20 AS (
+SELECT
+	EMPNO,
+	ENAME,
+	JOB,
+	DEPTNO
+FROM
+	EMP e
+WHERE
+	DEPTNO = 30) WITH READ ONLY;
+
+-- ROWNUM : 특수 칼럼(조회된 순서대로 일련번호를 부여함)
+	-- ORDER BY 기준이 PK(기본키) 가 아니면 번호 부여가 이상하게 나옴
+SELECT ROWNUM, e.*
+FROM EMP e 
+ORDER BY SAL DESC;
+
+-- 정렬의 기준이 PK가 아니라면 인라인 뷰에서 정렬 후 ROWNUM 번호를 부여해야 함
+SELECT ROWNUM, e.*
+FROM (SELECT * FROM EMP e ORDER BY SAL DESC)E;
+
+
+
 
 
 
