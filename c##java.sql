@@ -61,7 +61,7 @@ INSERT INTO booktbl(code, title, writer, price)  values(1003, '오라클', '박�
 INSERT INTO booktbl(code, title, writer, price)  values(1004, '점프투파이썬', '신기성', 35000);
 
 -- 전체 조회
-SELECT * FROM booktbl;
+SELECT * FROM booktbl ORDER BY CODE;
 
 -- 도서번호 1000 번인 도서 조회(상세조회 = WHERE 절에 PK 넣어서 작업)
 SELECT * FROM BOOKTBL b WHERE b.CODE = 1000;
@@ -79,6 +79,19 @@ DELETE FROM BOOKTBL b WHERE b.code = 1004;
 SELECT * FROM BOOKTBL b WHERE b.title LIKE '%자바%';
 
 
+-- 도서 회원
+CREATE TABLE MEMBERTBL(
+	userid varchar2(20) PRIMARY KEY,
+	name varchar2(20) NOT NULL,
+	password varchar2(20) NOT NULL
+);
 
+INSERT INTO MEMBERTBL(USERID, NAME, PASSWORD)
+values('hong123', '홍길동', 'hong123');
 
+-- 아이디와 비밀번호가 일치하는 회원 조회(로그인)
+SELECT * FROM MEMBERTBL WHERE USERID = 'hong123' AND PASSWORD = 'hong123';
+SELECT * FROM MEMBERTBL;
 
+-- 중복 아이디 검사하는 select문
+SELECT * FROM MEMBERTBL WHERE USERID = 'hong123';
