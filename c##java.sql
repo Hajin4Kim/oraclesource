@@ -47,7 +47,7 @@ DELETE FROM USERTBL WHERE userid = 'hhh' AND password = '123';
 
 CREATE TABLE booktbl(
 code NUMBER(4) PRIMARY KEY,
-title varchar2(50) NOT null,
+title varchar2(50) NOT NULL,
 writer varchar2(30) NOT null,
 price NUMBER(10) NOT null
 );
@@ -78,6 +78,19 @@ DELETE FROM BOOKTBL b WHERE b.code = 1004;
 -- 도서명 '자바' 키워드가 들어있는 도서 조회
 SELECT * FROM BOOKTBL b WHERE b.title LIKE '%자바%';
 
+-- 더미 데이터 삽입(2024-10-18 검색결과용)
+CREATE SEQUENCE book_seq
+START WITH 2000;
+
+INSERT INTO BOOKTBL(code, title, writer, price)
+(SELECT book_seq.nextval, title, writer, price FROM BOOKTBL);
+
+SELECT COUNT(*) FROM BOOKTBL b; 
+
+-- 검색 (조회)
+-- title 에 자바 키워드가 포함된 도서 조회 후 도서코드로 내림차순 정렬
+-- 키워드가 안오면 전체 조회
+SELECT * FROM BOOKTBL b WHERE b.TITLE LIKE '%자바%' ORDER BY CODE DESC;
 
 -- 도서 회원
 CREATE TABLE MEMBERTBL(
@@ -95,3 +108,50 @@ SELECT * FROM MEMBERTBL;
 
 -- 중복 아이디 검사하는 select문
 SELECT * FROM MEMBERTBL WHERE USERID = 'hong123';
+
+-- 비밀번호 변경
+UPDATE MEMBERTBL SET PASSWORD = '' WHERE USERID = '' AND PASSWORD = '';
+
+SELECT * FROM MEMBERTBL m ;
+
+-- BOARD 프로젝트 (2024-10-18)
+-- bno(number, pk), name(varchar2)-20, password(varchar2)-20, title(varchar2)-100, 
+-- content(varchar2)-2000, file(varchar2)-100, re_ref, re_lev, re_seq, readcnt, regdate(date-sysdate)
+CREATE TABLE board (
+	bno NUMBER(8) PRIMARY KEY,
+	name varchar2(20) NOT NULL,
+	password varchar2(20) NOT NULL,
+	title varchar2(100) NOT NULL,
+	content varchar2(2000) NOT NULL,
+	attach varchar2(100) NOT NULL,
+	re_ref NUMBER(8) NOT NULL,
+	re_lev NUMBER(8) NOT NULL,
+	re_seq NUMBER(8) NOT NULL,
+	readcnt NUMBER(8) DEFAULT 0,
+	regdate DATE DEFAULT sysdate
+);
+-- 시퀀스 생성 board_seq
+CREATE SEQUENCE board_seq;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
