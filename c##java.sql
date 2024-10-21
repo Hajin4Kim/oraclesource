@@ -133,13 +133,22 @@ CREATE TABLE board (
 -- 시퀀스 생성 board_seq
 CREATE SEQUENCE board_seq;
 
+SELECT * FROM board;
+SELECT bno, name, title, readcnt, regdate FROM board ORDER BY BNO DESC;
 
+-- board attach not null ==> null 가능하게 바꾸기
+ALTER TABLE "C##JAVA".BOARD MODIFY ATTACH VARCHAR2(100) NULL;
 
+-- insert 10번 실행
+INSERT INTO BOARD(BNO, NAME, PASSWORD, TITLE, CONTENT, RE_REF, RE_LEV, RE_SEQ) 
+VALUES(board_seq.nextval, 'hong', '12345', 'board 작성', 'board 작성', board_seq.currval,0,0)
 
+-- 상세조회 페이지 (Read.jsp getRow)
+SELECT * FROM BOARD WHERE BNO =3;
 
-
-
-
+-- 수정 update
+-- bno 와 password 가 일치 시, title, content 수정가능
+UPDATE BOARD SET TITLE='변경타이틀', CONTENT='변경내용' WHERE BNO ='1' AND PASSWORD ='12345';
 
 
 
