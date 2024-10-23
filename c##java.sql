@@ -199,21 +199,47 @@ VALUES(board_seq.nextval, 'hong', '12345', '댓글 board 작성', '댓글 board 
 
 SELECT * FROM BOARD WHERE RE_REF = 577 ORDER BY RE_REF DESC, RE_SEQ ASC;
 
+-- 검색
+-- 조건 title or content or name
+-- 검색어
+SELECT BNO, NAME, TITLE, READCNT, REGDATE, RE_LEV 
+FROM BOARD WHERE title -- criteria 에 담길 값
+LIKE '%추가%' -- keyword 에 담길 값
+ORDER BY RE_REF DESC, RE_SEQ ASC;
+
+SELECT BNO, NAME, TITLE, READCNT, REGDATE, RE_LEV 
+FROM BOARD WHERE content LIKE '%추가%'
+ORDER BY RE_REF DESC, RE_SEQ ASC;
+
+SELECT BNO, NAME, TITLE, READCNT, REGDATE, RE_LEV 
+FROM BOARD WHERE name LIKE '%홍길동%'
+ORDER BY RE_REF DESC, RE_SEQ ASC;
+
+-- Pagination ( 오라클 페이지 나누기)
+-- 정렬이 완료된 후 번호를 매겨서 일부분 추출
+SELECT rownum, BNO, NAME, TITLE, READCNT, REGDATE, RE_LEV FROM BOARD ORDER BY RE_REF DESC, RE_SEQ ASC;
+SELECT rownum, BNO, NAME, TITLE, READCNT, REGDATE, RE_LEV FROM BOARD ORDER BY bno DESC;
 
 
 
+-- 1~10번 갖고오기
+SELECT rownum rnum, BNO, NAME, TITLE, READCNT, REGDATE, RE_LEV 
+		FROM (SELECT BNO, NAME, TITLE, READCNT, REGDATE, RE_LEV FROM BOARD ORDER BY RE_REF DESC, RE_SEQ ASC)
+		WHERE rownum <= 20);
+-- 11 ~ 20번 갖고오기
+SELECT rnum, BNO, NAME, TITLE, READCNT, REGDATE, RE_LEV
+FROM (SELECT rownum rnum, BNO, NAME, TITLE, READCNT, REGDATE, RE_LEV 
+		FROM (SELECT BNO, NAME, TITLE, READCNT, REGDATE, RE_LEV FROM BOARD ORDER BY RE_REF DESC, RE_SEQ ASC)
+		WHERE rownum <= 20)
+WHERE rnum > 10;
 
+-- 1 page 요청 : rownum <= 10		rnum >0
+-- 2 page 요청 : rownum <= 20		rnum > 10
+-- 3 page 요청 : rownum <= 30		rnum > 20
 
-
-
-
-
-
-
-
-
-
-
+-- --  -- page 값 이용하여 계산
+-- rownum : 1page * 10 = 10
+-- rnum : (1page - 1) * 10;
 
 
 

@@ -1177,7 +1177,7 @@ WHERE
 
 SELECT * FROM EXAM_EMP;
 
--- 트랜잭션 : 최소 수행단위
+-- 트랜잭션 : 최소 수행단위 (CRUD 중 CUD)
 -- 		은행계좌이체()
 --		COMMIT(반영), ROLLBACK(취소)
 -- INSERT, DELETE, UPDATE => 데이터 변화
