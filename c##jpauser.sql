@@ -1,0 +1,7 @@
+CREATE TABLE memo (mno NUMBER(15) PRIMARY KEY,
+memo_text varchar2(200) NOT NULL);
+CREATE SEQUENCE memo_seq;
+SELECT * FROM MEMO m;
+
+DROP TABLE memo;
+DROP SEQUENCE memo_seq;

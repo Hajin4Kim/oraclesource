@@ -178,7 +178,7 @@ INSERT INTO BOARD(BNO, NAME, PASSWORD, TITLE, CONTENT, RE_REF, RE_LEV, RE_SEQ)
 VALUES(board_seq.nextval, 'hong', '12345', 'board 작성', 'board 작성', 577,1,1)
 
 -- 원본글과 댓글 함께 조회 (re_ref)
-SELECT * FROM BOARD WHERE RE_REF = 577;
+SELECT * FROM BOARD; -- WHERE RE_REF = 577;
 
 -- 두번째 댓글추가 (최신순 조회 : re_seq)
 -- re_seq 가 낮을수록 최신글
@@ -223,9 +223,9 @@ SELECT rownum, BNO, NAME, TITLE, READCNT, REGDATE, RE_LEV FROM BOARD ORDER BY bn
 
 
 -- 1~10번 갖고오기
-SELECT rownum rnum, BNO, NAME, TITLE, READCNT, REGDATE, RE_LEV 
+SELECT rownum, BNO, NAME, TITLE, READCNT, REGDATE, RE_LEV 
 		FROM (SELECT BNO, NAME, TITLE, READCNT, REGDATE, RE_LEV FROM BOARD ORDER BY RE_REF DESC, RE_SEQ ASC)
-		WHERE rownum <= 20);
+		WHERE rownum <= 10);
 -- 11 ~ 20번 갖고오기
 SELECT rnum, BNO, NAME, TITLE, READCNT, REGDATE, RE_LEV
 FROM (SELECT rownum rnum, BNO, NAME, TITLE, READCNT, REGDATE, RE_LEV 
@@ -241,6 +241,15 @@ WHERE rnum > 10;
 -- rownum : 1page * 10 = 10
 -- rnum : (1page - 1) * 10;
 
+-- total 페이지 값
+SELECT MAX(rownum) FROM BOARD;
+-- 전체 개수
+SELECT COUNT(*) FROM BOARD; 
+
+-- 검색어 기준으로의 전체개수
+SELECT COUNT(*) FROM BOARD WHERE title LIKE '%추가%'; 
+SELECT COUNT(*) FROM BOARD WHERE content LIKE '%추가%'; 
+SELECT COUNT(*) FROM BOARD WHERE name LIKE '%추가%'; 
 
 
 
