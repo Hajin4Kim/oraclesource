@@ -74,6 +74,11 @@ TEAM t
 JOIN TEAM_MEMBER tm ON
 	t.ID = tm.TEAM_ID WHERE t.NAME = '팀1';
 
+-- PARENT 삭제
+-- 무결성 제약조건 위배되었습니다- 자식 레코드가 발견되었습니다
+DELETE FROM  PARENT p WHERE p.id = 3;
+
+
 
 
 
