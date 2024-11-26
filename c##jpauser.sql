@@ -78,6 +78,85 @@ JOIN TEAM_MEMBER tm ON
 -- 무결성 제약조건 위배되었습니다- 자식 레코드가 발견되었습니다
 DELETE FROM  PARENT p WHERE p.id = 3;
 
+-- BOARD ID 기준으로 내림차순
+SELECT * FROM BOARD b ORDER BY b.ID DESC;
+
+SELECT * FROM BOARD b WHERE b.ID > 0 ORDER BY b.ID ASC;
+
+--실행계획
+-- 1) FULL
+-- 2) INDEX(RANGE SCAN)
+
+-- JpqlMember 와 Team 내부조인 : 팀명이 team2인 멤버 조회
+SELECT
+	*
+FROM
+	JPQL_MEMBER jm
+JOIN JPQL_TEAM jt ON 
+jm.TEAM_ID = jt.ID 
+WHERE
+	jt.NAME = 'team2';
+
+
+-- mart_orders, mart_member, mart_order_item 조인 (내부조인까지)
+SELECT
+	*
+FROM
+	MART_ORDERS mo
+JOIN MART_MEMBER mm ON
+	mo.MEMBER_MEMBER_ID = mm.MEMBER_ID
+JOIN MART_ORDER_ITEM moi ON
+	moi.ORDER_ORDER_ID = mo.ORDER_ID;
+
+-- left join
+SELECT
+	*
+FROM
+	MART_ORDERS mo
+JOIN MART_MEMBER mm ON
+	mo.MEMBER_MEMBER_ID = mm.MEMBER_ID
+LEFT JOIN MART_ORDER_ITEM moi ON
+	moi.ORDER_ORDER_ID = mo.ORDER_ID;
+
+
+-- 주문 번호에 따른 주문상품의 개수 추출
+SELECT moi.ORDER_ORDER_ID, COUNT(moi.ORDER_ORDER_ID) AS cnt, SUM(moi.COUNT) AS sum 
+FROM MART_ORDER_ITEM moi 
+GROUP BY moi.ORDER_ORDER_ID ; 
+
+-- 서브쿼리 (쿼리 안 쿼리)
+-- 1) from 절에 서브쿼리 사용 (인라인뷰)
+-- 2) where 절에 서브쿼리 사용(중첩 서브쿼리)
+-- 3) select 절에 서브쿼리 사용(스칼라)
+-- 주문내역 + 주문아이템
+SELECT
+	mo.ORDER_ID, mo.STATUS, A.cnt, A.sum
+FROM
+	MART_ORDERS mo
+LEFT JOIN (
+	SELECT
+		moi.ORDER_ORDER_ID AS ooi,
+		COUNT(moi.ORDER_ORDER_ID) AS cnt,
+		SUM(moi.count) AS sum
+	FROM
+		MART_ORDER_ITEM moi
+	GROUP BY
+		moi.ORDER_ORDER_ID) A
+ON
+	mo.ORDER_ID = A.ooi;
+
+-- subQuery
+SELECT
+	mo.ORDER_ID,
+	mo.STATUS,
+	(SELECT COUNT(moi.ORDER_ORDER_ID)
+	FROM
+		MART_ORDER_ITEM moi
+	WHERE mo.ORDER_ID = moi.order_order_id
+	GROUP BY
+		moi.ORDER_ORDER_ID) AS cnt
+FROM
+	MART_ORDERS mo JOIN MART_MEMBER mm ON mo.MEMBER_MEMBER_ID = mm.MEMBER_ID;
 
 
 
@@ -86,21 +165,8 @@ DELETE FROM  PARENT p WHERE p.id = 3;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+-- 특정 bno의 댓글 추출
+SELECT * FROM REPLY r WHERE r.BOARD_BNO = 85 ORDER BY rno DESC;
 
 
 
